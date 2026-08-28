@@ -1,28 +1,48 @@
-#python alarm clock
+# Python alarm clock
 import datetime
 import time
 
+
 def set_alarm(alarm_time):
-	print(f"Alarm set for {alarm_time}")
-	#use a sound file if want
-	is_running = True
+    print(f"Alarm set for {alarm_time.strftime('%H:%M:%S')}")
 
-	while is_running:
-		current_time = datetime.datetime.now().strftime("%H:%M:%S")
-		print(current_time)
+    while True:
+        current_time = datetime.datetime.now()
 
-		if current_time == alarm_time:
-			print("Wakey , wakey !!")
+        print(current_time.strftime("%H:%M:%S"))
+        if current_time >= alarm_time:
+            print("Wakey, wakey!!")
+            break
 
-			is_running = False
-		
+        time.sleep(1)
 
-		time.sleep(1)
-		
+
 if __name__ == "__main__":
-	alarm_time = input("Enter the alarm time (HH:MM:SS) : ")
-	current_time = datetime.datetime.now().strftime("%H:%M:%S")
-	if alarm_time < current_time:
-		print("Wrong time entered")
-	else:
-		set_alarm(alarm_time)
+    alarm_input = input("Enter the alarm time (HH:MM or HH:MM:SS): ")
+
+    try:
+        if len(alarm_input) == 5:
+            alarm_time_only = datetime.datetime.strptime(
+                alarm_input, "%H:%M"
+            ).time()
+        else:
+            alarm_time_only = datetime.datetime.strptime(
+                alarm_input, "%H:%M:%S"
+            ).time()
+
+    except ValueError:
+        print("Invalid time format.")
+        print("Please use HH:MM or HH:MM:SS")
+        exit()
+
+    now = datetime.datetime.now()
+
+    alarm_time = datetime.datetime.combine(
+        now.date(),
+        alarm_time_only
+    )
+	
+    if alarm_time <= now:
+        print("That time has already passed today.")
+    else:
+        set_alarm(alarm_time)
